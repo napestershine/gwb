@@ -8,7 +8,7 @@
                 <div class="panel-heading">Dashboard</div>
 
                 <div class="panel-body">
-                    You are logged in!
+                    <a href="/jobs" class="btn btn-primary">All Job List</a>
                 </div>
             </div>
         </div>
