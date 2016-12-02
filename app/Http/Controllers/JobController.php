@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs;
 use Illuminate\Http\Request;
 
 class JobController extends Controller
@@ -13,7 +14,9 @@ class JobController extends Controller
      */
     public function index()
     {
-        return view('jobs.index');
+
+        $jobs = \App\Jobs::all();
+        return view('jobs.index', compact(['jobs']));
     }
 
     /**
@@ -23,7 +26,7 @@ class JobController extends Controller
      */
     public function create()
     {
-        //
+        return view('jobs.new');
     }
 
     /**
@@ -34,7 +37,22 @@ class JobController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validator = \Validator::make($request->all(), [
+            'title' => 'required|max:255',
+            'user_id' => 'required'
+        ]);
+        if ($validator->fails()) {
+            return back()
+                ->withInput()
+                ->withErrors($validator);
+        }
+
+
+        $job = new \App\Jobs;
+        $job->title = $request->title;
+        $job->user_id = $request->user_id;
+        $job->save();
+        return redirect('/jobs');
     }
 
     /**
