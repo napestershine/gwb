@@ -20,4 +20,5 @@ Auth::routes();
 Route::get('/home', 'HomeController@index');
 Route::group(['middleware' => 'auth'], function () {
     Route::resource('jobs', 'JobController');
+    Route::get('/{job_id}/messages', 'MessageController@index');
 });

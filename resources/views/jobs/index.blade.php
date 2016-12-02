@@ -22,9 +22,9 @@
                         <td> @if(Auth::check())
                                 @if($job->user_id === Auth::user()->id)
                                     <a href="#">Inbox</a>
+                                @else
+                                    <a href="/messages">Contact</a>
                                 @endif
-                            @else
-                                <a href="#">Contact</a>
                             @endif
                         </td>
                     </tr>
