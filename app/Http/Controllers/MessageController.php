@@ -19,11 +19,7 @@ class MessageController extends Controller
 
         $user = $request->user();
 
-
-
-        //$messages = \App\Message::find(['job_id' => $job_id])->whereIn('user_id', [$job->user_id, $user->id])->sortByDesc('updated_at')->toSql();
-        $messages = \App\Message::where('job_id', $job_id)->where('user_id', $user_id)->orWhere('user_id', '=', $user->id)->orderBy('updated_at', 'desc')->get();
-        //$messages = DB::table('messages')->where(['job_id' => $job_id])->where('user_id', '=', $job->user_id)->orWhere('user_id', '=',$user->id)->orderBy('updated_at', 'desc')->get();
+        $messages = \App\Message::where('job_id', $job_id)->whereIn('user_id', [$user_id, $user->id])->orderBy('updated_at', 'desc')->get();
         return view('messages', compact(['job', 'messages']));
     }
 
