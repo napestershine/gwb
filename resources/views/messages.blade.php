@@ -47,11 +47,7 @@
                     @foreach($messages as $message)
                         <li>       {{ date($message->updated_at) }} -
                             <strong>
-                                @if($message->jobs->user_id==$receiver_id)
-                                    {{ $message->receiver->name }}
-                                @else
-                                    {{ $message->sender->name }}
-                                @endif
+                                {{ $message->sender->name }}
                             </strong>
                             - {{ $message->message }}
                         </li>
