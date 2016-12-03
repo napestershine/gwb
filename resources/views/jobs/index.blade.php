@@ -21,7 +21,7 @@
                         <td>{{ $job->user->name }}</td>
                         <td> @if(Auth::check())
                                 @if($job->user_id === Auth::user()->id)
-                                    <a href="#">Inbox</a>
+                                    <a href="/{{ $job->id }}/inbox">Inbox</a>
                                 @else
                                     <a href="/{{ $job->user_id }}/{{ $job->id }}/messages">Contact</a>
                                 @endif

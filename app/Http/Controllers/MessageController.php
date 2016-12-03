@@ -51,4 +51,15 @@ class MessageController extends Controller
         $message->save();
         return redirect()->back();
     }
+
+    public function inbox($job_id, Request $request)
+    {
+        $job = \App\Jobs::find($job_id);
+        $user = $request->user();
+
+        $users = \App\Message::select('user_id', 'job_id')->where('job_id', $job_id)->where('user_id', '!=', $user->id)->distinct('user_id')->orderBy('updated_at', 'desc')->get();
+
+        return view('inbox', compact(['job','users']));
+
+    }
 }
