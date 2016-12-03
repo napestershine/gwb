@@ -3,19 +3,34 @@
 namespace App\Http\Controllers;
 
 use App\Message;
+
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+
 
 class MessageController extends Controller
 {
 
-    public function index()
+    public function index($user_id, $job_id, Request $request)
     {
-        return view('messages');
+        $job = \App\Jobs::find($job_id);
+
+
+        $user = $request->user();
+
+
+
+        //$messages = \App\Message::find(['job_id' => $job_id])->whereIn('user_id', [$job->user_id, $user->id])->sortByDesc('updated_at')->toSql();
+        $messages = \App\Message::where('job_id', $job_id)->where('user_id', $user_id)->orWhere('user_id', '=', $user->id)->orderBy('updated_at', 'desc')->get();
+        //$messages = DB::table('messages')->where(['job_id' => $job_id])->where('user_id', '=', $job->user_id)->orWhere('user_id', '=',$user->id)->orderBy('updated_at', 'desc')->get();
+        return view('messages', compact(['job', 'messages']));
     }
+
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
@@ -24,7 +39,8 @@ class MessageController extends Controller
 
         $validator = \Validator::make($request->all(), [
             'message' => 'required|max:255',
-            'user_id' => 'required'
+            'user_id' => 'required',
+            'job_id' => 'required'
         ]);
         if ($validator->fails()) {
             return back()
@@ -32,11 +48,11 @@ class MessageController extends Controller
                 ->withErrors($validator);
         }
 
-
         $message = new \App\Message;
         $message->message = $request->message;
         $message->user_id = $request->user_id;
+        $message->job_id = $request->job_id;
         $message->save();
-        return redirect('/messages');
+        return redirect()->back();
     }
 }

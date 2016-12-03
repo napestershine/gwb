@@ -23,7 +23,7 @@
                                 @if($job->user_id === Auth::user()->id)
                                     <a href="#">Inbox</a>
                                 @else
-                                    <a href="/messages">Contact</a>
+                                    <a href="/{{ $job->user_id }}/{{ $job->id }}/messages">Contact</a>
                                 @endif
                             @endif
                         </td>
