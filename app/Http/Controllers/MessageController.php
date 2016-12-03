@@ -65,7 +65,7 @@ class MessageController extends Controller
         $job = \App\Jobs::find($job_id);
         $user = $request->user();
 
-        $users = \App\Message::where('job_id', $job_id)
+        $users = \App\Message::select('sender_id','job_id')->where('job_id', $job_id)
             ->where('receiver_id', '=', $user->id)
             ->distinct('sender_id')->orderBy('updated_at', 'desc')->get();
 
