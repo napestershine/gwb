@@ -15,11 +15,16 @@ class Message extends Model
 
     public function jobs()
     {
-        return $this->belongsTo('App\Jobs');
+        return $this->belongsTo('App\Jobs','job_id');
     }
 
-    public function user()
+    public function sender()
     {
-        return $this->belongsTo('App\User');
+        return $this->belongsTo('App\User','sender_id');
+    }
+
+    public function receiver()
+    {
+        return $this->belongsTo('App\User','receiver_id');
     }
 }

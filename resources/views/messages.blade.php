@@ -29,8 +29,10 @@
                     <textarea class="form-control" id="message" name="message" placeholder="Message"></textarea>
                 </div>
                 @if(Auth::check())
-                    <input type="hidden" value="{{Auth::user()->id}}" name="user_id" title="user_id"/>
+                    <input type="hidden" value="{{Auth::user()->id}}" name="sender_id" title="sender_id"/>
                 @endif
+                <input type="hidden" value="{{$receiver_id}}" name="receiver_id" title="receiver_id"/>
+
                 <input type="hidden" value="{{ $job->id}}" name="job_id" title="job_id"/>
 
                 <button type="submit" class="btn btn-default">Submit</button>
@@ -43,8 +45,16 @@
             <ul>
                 @if(count($messages) > 0 )
                     @foreach($messages as $message)
-                        <li>       {{ date($message->updated_at) }} - <strong> {{ $message->user->name }} </strong>
-                            - {{ $message->message }}</li>
+                        <li>       {{ date($message->updated_at) }} -
+                            <strong>
+                                @if($message->jobs->user_id==$receiver_id)
+                                    {{ $message->receiver->name }}
+                                @else
+                                    {{ $message->sender->name }}
+                                @endif
+                            </strong>
+                            - {{ $message->message }}
+                        </li>
                     @endforeach
                 @else
                     <li>There are no messages</li>

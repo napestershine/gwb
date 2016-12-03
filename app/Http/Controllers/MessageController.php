@@ -12,15 +12,22 @@ use Illuminate\Support\Facades\DB;
 class MessageController extends Controller
 {
 
-    public function index($user_id, $job_id, Request $request)
+    public function index($receiver_id, $job_id, Request $request)
     {
         $job = \App\Jobs::find($job_id);
 
-
         $user = $request->user();
 
-        $messages = \App\Message::where('job_id', $job_id)->whereIn('user_id', [$user_id, $user->id])->orderBy('updated_at', 'desc')->get();
-        return view('messages', compact(['job', 'messages']));
+        $messages = \App\Message::where('job_id', $job_id)
+            ->whereIn('sender_id', [$receiver_id, $user->id])
+            ->whereIn('receiver_id', [$receiver_id, $user->id])
+            ->orderBy('updated_at', 'desc')->get();
+
+        if($receiver_id==$job->user_id) {
+            $receiver_id=$job->user_id;
+        }
+
+        return view('messages', compact(['job', 'messages', 'receiver_id']));
     }
 
     /**
@@ -32,10 +39,10 @@ class MessageController extends Controller
     public function store(Request $request)
     {
 
-
         $validator = \Validator::make($request->all(), [
             'message' => 'required|max:255',
-            'user_id' => 'required',
+            'sender_id' => 'required',
+            'receiver_id' => 'required',
             'job_id' => 'required'
         ]);
         if ($validator->fails()) {
@@ -46,7 +53,8 @@ class MessageController extends Controller
 
         $message = new \App\Message;
         $message->message = $request->message;
-        $message->user_id = $request->user_id;
+        $message->sender_id = $request->sender_id;
+        $message->receiver_id = $request->receiver_id;
         $message->job_id = $request->job_id;
         $message->save();
         return redirect()->back();
@@ -57,9 +65,10 @@ class MessageController extends Controller
         $job = \App\Jobs::find($job_id);
         $user = $request->user();
 
-        $users = \App\Message::select('user_id', 'job_id')->where('job_id', $job_id)->where('user_id', '!=', $user->id)->distinct('user_id')->orderBy('updated_at', 'desc')->get();
+        $users = \App\Message::where('job_id', $job_id)
+            ->where('receiver_id', '=', $user->id)
+            ->distinct('sender_id')->orderBy('updated_at', 'desc')->get();
 
         return view('inbox', compact(['job','users']));
-
     }
 }
